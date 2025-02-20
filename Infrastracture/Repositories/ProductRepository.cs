@@ -40,8 +40,6 @@ public class ProductRepository(StoreContext context) : IProductRepository
     public async Task<Product?> GetProductById(int id)
     {
         return await context.Products.FindAsync(id);
-         
-        
     }
 
     public void AddProduct(Product product)

@@ -17,8 +17,12 @@ public class StoreContextSeed
             //if (products == null) return;
             //context.Products.AddRange(products);
             //await context.SaveChangesAsync();
-            if (products?.Count > 0) {
-                await context.Products.AddRangeAsync(products);
+            if (products?.Count > 0)
+            {
+                foreach (var product in products)
+                {
+                    await context.Products.AddAsync(product);
+                }
                 await context.SaveChangesAsync();
             }
 

@@ -1,10 +1,12 @@
 using Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastracture.Data;
-public class StoreContext : DbContext
+public class StoreContext : IdentityDbContext<AppUser>
 {
     public DbSet<Product> Products { get; set; }
+    public DbSet<Address> Addresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
