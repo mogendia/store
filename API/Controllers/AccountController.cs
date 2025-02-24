@@ -46,19 +46,20 @@ namespace API.Controllers
                 Token = _tokenService.CreateToken(user),
             };
         }
-        [Authorize]
         [HttpPost("logout")]
+        [Authorize]
         public async Task<ActionResult> Logout()
         {
             await signIn.SignOutAsync();
             return NoContent();
         }
         [HttpGet("info-user")]
+        [Authorize]
         public async Task<ActionResult> GetUserInfo()
         {
             if (User.Identity?.IsAuthenticated==false) return NotFound("Not Authorized");
             //var user = await signIn.UserManager.GetUserByEmailWithAddress(User);
-            var user = await signIn.UserManager.GetUserByEmail(User);
+            var user = await signIn.UserManager.GetUserByEmailWithAddress(User);
             if (user == null) return Unauthorized();
             return Ok(new
             {
@@ -68,7 +69,7 @@ namespace API.Controllers
                 Address = user.Address?.ToDto()
             });
         }
-        [HttpGet]
+        [HttpGet]   
         public ActionResult GetAuthState()
         {
             return Ok(new
@@ -76,8 +77,8 @@ namespace API.Controllers
                 IsAuthenticated = User.Identity?.IsAuthenticated ?? false 
             });
         }
-        [Authorize]
         [HttpPost("address")]
+        [Authorize]
         public async Task<ActionResult<Address>> CreateAddress(AddressDto addressDto)
         {
             var user = await signIn.UserManager.GetUserByEmail(User);

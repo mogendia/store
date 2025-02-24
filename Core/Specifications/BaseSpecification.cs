@@ -4,10 +4,10 @@ namespace Core.Interfaces;
 
 public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecification<T>
 {
-    protected BaseSpecification():this(null)
+    protected BaseSpecification():this(criteria: null)
     {
     }
-    public Expression<Func<T, bool>>? Criteria => criteria;
+    public Expression<Func<T, bool>>? Criteria =>  criteria;
     public Expression<Func<T, object>>? OrderByAsc { get; private set; }
     public Expression<Func<T, object>>? OrderByDesc { get; private set;}
     public bool IsDistinct { get; private set; }
@@ -40,8 +40,7 @@ public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecif
 public class BaseSpecification<T, TResult>(Expression<Func<T, bool>>? criteria)
     : BaseSpecification<T>(criteria),ISpecification<T, TResult> {
     protected BaseSpecification() : this(null)
-    {
-    }
+    {}
     public Expression<Func<T, TResult>>? Select { get; private set; }
     protected void AddSelect(Expression<Func<T, TResult>> selectExpression)
     {

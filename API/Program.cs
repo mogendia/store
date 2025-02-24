@@ -1,31 +1,22 @@
 using API.Extensions;
 using API.Middleware;
 using Core.Entities;
-using Core.Interfaces;
-using Infrastracture.configuration;
 using Infrastracture.Data;
-using Infrastracture.Repositories;
-using Infrastracture.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using StackExchange.Redis;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
-
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped( typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-builder.Services.AddSingleton<ICartService, CartService>();
-builder.Services.AddAuthorization();
+builder.Services.AddAppServices();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
-    .AddEntityFrameworkStores<StoreContext>();
+    .AddEntityFrameworkStores<StoreContext>()
+    .AddDefaultTokenProviders();
+builder.Services.AddAuthorization();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

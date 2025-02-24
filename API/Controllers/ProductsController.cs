@@ -3,7 +3,6 @@ using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -61,7 +60,8 @@ public class ProductsController(IGenericRepository<Product> _repo) : BaseApiCont
     public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
     {
         var spec = new BrandSpecification();
-        return Ok(await _repo.GetAllAsyncWithSpec(spec));
+        var brands = await _repo.GetAllAsyncWithSpec(spec);
+        return Ok(brands);
     }
     
     [HttpGet("types")]

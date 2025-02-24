@@ -6,7 +6,7 @@ using StackExchange.Redis;
 
 namespace API.Extensions
 {
-    public static class ApplicationServiceExtension
+    public static class DatabaseServiceExtension
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
@@ -21,9 +21,7 @@ namespace API.Extensions
                 var configuration = ConfigurationOptions.Parse(configStr, true);
                 return ConnectionMultiplexer.Connect(configuration);
             });
-
             services.AddCors();
-            services.AddScoped<ITokenService, TokenService>();
             return services;
         }
     }

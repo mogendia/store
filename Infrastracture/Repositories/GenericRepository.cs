@@ -3,9 +3,9 @@ using Core.Interfaces;
 using Infrastracture.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastracture.configuration;
+namespace Infrastracture.Repositories;
 
-public class GenericRepository<T> (StoreContext context): IGenericRepository<T> where T :BaseEntity
+public class GenericRepository<T>(StoreContext context) : IGenericRepository<T> where T : BaseEntity
 {
     public async Task<T?> GetByIdAsync(int id)
     {
@@ -53,11 +53,11 @@ public class GenericRepository<T> (StoreContext context): IGenericRepository<T> 
         return context.Set<T>().Any(x => x.Id == id);
     }
 
-  
+
 
     public async Task<IReadOnlyList<TResult>> GetAllAsyncWithSpec<TResult>(ISpecification<T, TResult> spec)
     {
-       return await ApplySpecification(spec).ToListAsync();
+        return await ApplySpecification(spec).ToListAsync();
     }
 
     public async Task<TResult?> GetEntityWithSpec<TResult>(ISpecification<T, TResult> spec)
@@ -70,7 +70,7 @@ public class GenericRepository<T> (StoreContext context): IGenericRepository<T> 
     }
     private IQueryable<TResult> ApplySpecification<TResult>(ISpecification<T, TResult> spec)
     {
-        return SpecificationEvaluator<T>.GetQuery<T,TResult>(context.Set<T>().AsQueryable(), spec);
+        return SpecificationEvaluator<T>.GetQuery<T, TResult>(context.Set<T>().AsQueryable(), spec);
     }
 
     public async Task<int> CountAsync(ISpecification<T> spec)

@@ -9,15 +9,16 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.HasKey(p=>p.Id);
         builder.Property(p=>p.Price)
-               .HasColumnName("decimal(182,)");
+                .HasColumnName("Price")
+               .HasColumnType("decimal(18,2)");
         builder.Property(x => x.Description)
                .HasColumnType("VARCHAR")
-               .HasMaxLength(100)
+               .HasMaxLength(255)
                .IsRequired();    
         builder.Property(x => x.Name)
         
                .HasColumnType("VARCHAR")
-               .HasMaxLength(20)
+               .HasMaxLength(255)
                .IsRequired();    
     }
 }

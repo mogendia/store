@@ -14,9 +14,7 @@ public class StoreContextSeed
             // Deserialize (convert json to object)
 
             var products = JsonSerializer.Deserialize<List<Product>>(productData);
-            //if (products == null) return;
-            //context.Products.AddRange(products);
-            //await context.SaveChangesAsync();
+            
             if (products?.Count > 0)
             {
                 foreach (var product in products)
@@ -25,8 +23,18 @@ public class StoreContextSeed
                 }
                 await context.SaveChangesAsync();
             }
-
-
+        }
+        if (!context.Deliveries.Any())
+        {
+            var DeliveryData = await File.ReadAllTextAsync("../Infrastracture/Data/SeedData/delivery.json");
+            var delivery = JsonSerializer.Deserialize<List<DeliveryMethod>>(DeliveryData);
+            if (delivery?.Count > 0) {
+                foreach (var item in delivery)
+                {
+                    await context.Deliveries.AddAsync(item);
+                }
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
