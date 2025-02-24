@@ -1,5 +1,6 @@
 using Core.Entities;
 using Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastracture.Data;
 
@@ -30,6 +31,10 @@ public class SpecificationEvaluator<T> where T : BaseEntity
             query = query.Skip(spec.Skip).Take(spec.Take);
         }
 
+        query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
+        query = spec.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
+
+
 
         return query;
     }
@@ -51,10 +56,11 @@ public class SpecificationEvaluator<T> where T : BaseEntity
         }
         
         var selectQuery = query as IQueryable<TResult>;
-        if (selectQuery != null)
+        if (spec.Select != null)
         {
              selectQuery = query.Select(spec.Select);
         }
+        
         if (spec.IsDistinct)
         {
             selectQuery = selectQuery?.Distinct();
