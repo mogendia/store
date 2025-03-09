@@ -13,8 +13,6 @@ namespace API.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddSingleton<ICartService, CartService>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 
             return services;
         }

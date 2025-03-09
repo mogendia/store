@@ -1,23 +1,31 @@
 using API.Extensions;
 using API.Middleware;
 using Core.Entities;
+using Core.Interfaces;
+using Infrastracture.configuration;
 using Infrastracture.Data;
-using Microsoft.AspNetCore.Identity;
+using Infrastracture.Repositories;
+using Infrastracture.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using StackExchange.Redis;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
-builder.Services.AddAppServices();
-builder.Services.AddIdentityApiEndpoints<AppUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<StoreContext>()
-    .AddApiEndpoints()
-    .AddDefaultTokenProviders();
 
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped( typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+builder.Services.AddSingleton<ICartService, CartService>();
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<AppUser>()
+    .AddEntityFrameworkStores<StoreContext>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -29,12 +37,10 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var service = scope.ServiceProvider;
     var context = service.GetRequiredService<StoreContext>();
-    var userManager = service.GetRequiredService<UserManager<AppUser>>();
-
     try
     {
         await context.Database.MigrateAsync();
-        await StoreContextSeed.SeedAsync(context,userManager);
+        await StoreContextSeed.SeedAsync(context);
     }
     catch (Exception e)
     {

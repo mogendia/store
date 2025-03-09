@@ -23,7 +23,6 @@ namespace API.Controllers
                 UserName = register.Email
             };
             var result = await signIn.UserManager.CreateAsync(user, register.Password);
-          
             if (!result.Succeeded)
             {
                 foreach(var error in result.Errors)
@@ -35,10 +34,9 @@ namespace API.Controllers
                 
             return Ok();
         }
-       
         [HttpPost("login")]
         public async Task<ActionResult<AppUserDto>> Login (LoginDto login)
-        {   
+        {
             var user = await signIn.UserManager.FindByEmailAsync(login.Email);
             if (user == null) return Unauthorized();
             var result = await signIn.CheckPasswordSignInAsync(user, login.Password, false);
@@ -48,34 +46,29 @@ namespace API.Controllers
                 Token = _tokenService.CreateToken(user),
             };
         }
-        [HttpPost("logout")]
         [Authorize]
+        [HttpPost("logout")]
         public async Task<ActionResult> Logout()
         {
             await signIn.SignOutAsync();
             return NoContent();
         }
         [HttpGet("info-user")]
-        [Authorize]
         public async Task<ActionResult> GetUserInfo()
         {
             if (User.Identity?.IsAuthenticated==false) return NotFound("Not Authorized");
-            var user = await signIn.UserManager.GetUserByEmailWithAddress(User);
-
-            var roles = await signIn.UserManager.GetRolesAsync(user);
-
+            //var user = await signIn.UserManager.GetUserByEmailWithAddress(User);
+            var user = await signIn.UserManager.GetUserByEmail(User);
             if (user == null) return Unauthorized();
             return Ok(new
             {
                 user.FirstName,
                 user.LastName,
                 user.Email,
-                Address = user.Address?.ToDto(),
-                //Roles = User.FindFirstValue(ClaimTypes.Role)
-                Roles = roles
+                Address = user.Address?.ToDto()
             });
         }
-        [HttpGet]   
+        [HttpGet]
         public ActionResult GetAuthState()
         {
             return Ok(new
@@ -83,8 +76,8 @@ namespace API.Controllers
                 IsAuthenticated = User.Identity?.IsAuthenticated ?? false 
             });
         }
-        [HttpPost("address")]
         [Authorize]
+        [HttpPost("address")]
         public async Task<ActionResult<Address>> CreateAddress(AddressDto addressDto)
         {
             var user = await signIn.UserManager.GetUserByEmail(User);
@@ -102,6 +95,5 @@ namespace API.Controllers
            
         }
 
-        /
     }
 }

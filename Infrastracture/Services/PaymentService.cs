@@ -6,7 +6,6 @@ using Product = Core.Entities.Product;
 
 namespace Infrastracture.Services
 {
-    public class PaymentService(IConfiguration config,IUnitOfWork unit,ICartService cartService) : IPaymentService
     {
         public async Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId)
         {
@@ -16,13 +15,11 @@ namespace Infrastracture.Services
             var shippingPrice = 0m;
             if (cart.DeliveryMethodId.HasValue)
             {
-                var deliveryMethod = await unit.Repository<DeliveryMethod>().GetByIdAsync((int)cart.DeliveryMethodId);
                 if (deliveryMethod == null) return null;
                 shippingPrice = deliveryMethod.Price;
             }
             foreach (var item in cart.Items)
             {
-                var productItem = await unit.Repository<Product>().GetByIdAsync(item.ProductId);
                 if (productItem == null)  return null;
                 if (productItem.Price != item.Price)
                 {
@@ -30,7 +27,6 @@ namespace Infrastracture.Services
 
                 }
             }
-            var totalAmount = (long)(cart.Items.Sum(x => x.Quantity * x.Price) * 100
                     +(long)(shippingPrice * 100));
              
             var service = new PaymentIntentService();
@@ -39,7 +35,6 @@ namespace Infrastracture.Services
             {
                 var options = new PaymentIntentCreateOptions
                 {
-                    Amount = totalAmount,
                     Currency = "usd",
                     PaymentMethodTypes = ["card"]
                 };
@@ -50,7 +45,6 @@ namespace Infrastracture.Services
             {
                 var options = new PaymentIntentUpdateOptions
                 {
-                    Amount = totalAmount
                 };
                 intent = await service.UpdateAsync(cart.PaymentIntentId, options);
             }
