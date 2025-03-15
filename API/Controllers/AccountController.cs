@@ -10,10 +10,10 @@ using System.Security.Claims;
 
 namespace API.Controllers
 {
-    public class AccountController(SignInManager<AppUser> signIn,ITokenService _tokenService) : BaseApiController
+    public class AccountController(SignInManager<AppUser> signIn, ITokenService _tokenService) : BaseApiController
     {
         [HttpPost("register")]
-        public async Task<ActionResult> Register (RegisterDto register)
+        public async Task<ActionResult> Register(RegisterDto register)
         {
             var user = new AppUser
             {
@@ -26,13 +26,13 @@ namespace API.Controllers
           
             if (!result.Succeeded)
             {
-                foreach(var error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(error.Code, error.Description);
                 }
                 return ValidationProblem();
             }
-                
+
             return Ok();
         }
        
@@ -44,7 +44,7 @@ namespace API.Controllers
             var result = await signIn.CheckPasswordSignInAsync(user, login.Password, false);
             if (!result.Succeeded) return BadRequest();
             return new AppUserDto()
-            { 
+            {
                 Token = _tokenService.CreateToken(user),
             };
         }
@@ -80,7 +80,7 @@ namespace API.Controllers
         {
             return Ok(new
             {
-                IsAuthenticated = User.Identity?.IsAuthenticated ?? false 
+                IsAuthenticated = User.Identity?.IsAuthenticated ?? false
             });
         }
         [HttpPost("address")]
@@ -92,14 +92,14 @@ namespace API.Controllers
             {
                 user.Address = addressDto.ToEntity();
             }
-            else 
+            else
             {
                 user.Address.UpdateFromDto(addressDto);
             }
-            var result =await signIn.UserManager.UpdateAsync(user);
-            if(!result.Succeeded) return BadRequest("Problem updating address");
+            var result = await signIn.UserManager.UpdateAsync(user);
+            if (!result.Succeeded) return BadRequest("Problem updating address");
             return Ok(user.Address.ToDto());
-           
+
         }
 
         /
